@@ -139,6 +139,41 @@ std::array<std::byte, SHA256_SIZE> SaveFile::generateFirstChecksum()
     return toByteArray(finalSha.digest());
 }
 
+std::array<std::byte, SHA256_SIZE> SaveFile::generateSecondChecksum()
+{
+    if (!m_valid)
+    {
+        LOG_F(ERROR, "Failed to generate first checksum: Invalid file");
+        return {};
+    }
+    
+
+    if (m_buffer.size() == 0)
+    {
+        LOG_F(ERROR, "Failed to generate first checksum: File buffer is empty");
+        return {};
+    }
+
+    const int INPUT_SIZE = 0x40;
+
+    std::array<std::byte, INPUT_SIZE> input;
+    std::copy_n(m_buffer.begin(), INPUT_SIZE, input.begin());
+
+    std::array<std::byte, SAVE_DATA_SIZE> saveData = getSaveData();
+
+    SHA256 sha;
+    sha.update(reinterpret_cast<uint8_t*>(input.data()), INPUT_SIZE);
+    sha.update(reinterpret_cast<uint8_t*>(saveData.data()), SAVE_DATA_SIZE);
+
+    std::array<std::byte, SHA256_SIZE> digest = toByteArray(sha.digest());
+
+    SHA256 finalSha;
+    finalSha.update(reinterpret_cast<uint8_t*>(digest.data()), SHA256_SIZE);
+    finalSha.update(reinterpret_cast<uint8_t*>(HASH_SALT.data()), HASH_SALT.size());
+    
+    return toByteArray(finalSha.digest());
+}
+
 std::array<std::byte, SHA256_SIZE> SaveFile::toByteArray(std::array<uint8_t, SHA256_SIZE> src)
 {
     std::array<std::byte, SHA256_SIZE> result;
