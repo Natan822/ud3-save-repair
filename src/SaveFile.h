@@ -21,7 +21,10 @@ public:
     std::array<std::byte, USER_ID_SIZE> getUserId();
     std::array<std::byte, SAVE_DATA_SIZE> getSaveData();
 
+    void test();
 private:
+    static std::array<uint8_t, 0x10> HASH_SALT;
+
     std::vector<std::byte> m_buffer;
     std::string m_path;
     bool m_valid;
@@ -34,4 +37,5 @@ private:
     std::array<std::byte, SHA256_SIZE> generateFirstChecksum();
     std::array<std::byte, SHA256_SIZE> generateSecondChecksum();
 
+    static std::array<std::byte, SHA256_SIZE> toByteArray(std::array<uint8_t, SHA256_SIZE> src);
 };
