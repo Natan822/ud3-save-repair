@@ -82,13 +82,15 @@ std::array<std::byte, SAVE_DATA_SIZE> SaveFile::getSaveData()
 
     std::array<std::byte, SAVE_DATA_SIZE> saveData;
     
-    const int FIRST_SECTION_SIZE = SAVE_DATA_SIZE - 0x428;
+    const int FIRST_SECTION_SIZE = SAVE_DATA_SIZE - 0x408;
     
     // Save data before checksum
     auto start = m_buffer.begin() + SAVE_DATA_OFFSET;
     std::copy_n(start, FIRST_SECTION_SIZE, saveData.begin());
 
     // Save data after checksum
-    start += FIRST_SECTION_SIZE + 0x20;
+    start += FIRST_SECTION_SIZE + 0x40;
     std::copy_n(start, 0x408, saveData.end() - 0x408);
+
+    return saveData;
 }
