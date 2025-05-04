@@ -37,5 +37,8 @@ private:
     std::array<std::byte, SHA256_SIZE> generateFirstChecksum();
     std::array<std::byte, SHA256_SIZE> generateSecondChecksum();
 
+    void fixFirstChecksum(std::array<std::byte, SHA256_SIZE> checksum);
+    void fixSecondChecksum(std::array<std::byte, SHA256_SIZE> checksum);
+
     static std::array<std::byte, SHA256_SIZE> toByteArray(std::array<uint8_t, SHA256_SIZE> src);
 };

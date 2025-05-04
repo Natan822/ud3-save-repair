@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <SHA256.h>
 #include <iostream>
+#include <loguru.hpp>
 
 #include "Utils.h"
 #include "SaveFile.h"
@@ -15,6 +16,8 @@ SaveFile::SaveFile(std::string path)
 {
     if (path.empty())
     {
+        LOG_F(ERROR, "Failed to create file object: Path is empty: %s", path.c_str());
+
         m_valid = false;
         return;
     }
@@ -34,6 +37,8 @@ void SaveFile::load()
 
     if (!file.good())
     {
+        LOG_F(ERROR, "Failed to load file at: %s", m_path.c_str());
+
         m_valid = false;
         return;
     }
@@ -55,8 +60,16 @@ void SaveFile::cleanPath(std::string& path)
 
 std::array<std::byte, USER_ID_SIZE> SaveFile::getUserId()
 {
-    if (!m_valid || m_buffer.size() == 0)
+    if (!m_valid)
     {
+        LOG_F(ERROR, "Failed to retrieve user ID: Invalid file");
+        return {};
+    }
+    
+
+    if (m_buffer.size() == 0)
+    {
+        LOG_F(ERROR, "Failed to retrieve user ID: File buffer is empty");
         return {};
     }
 
@@ -70,8 +83,16 @@ std::array<std::byte, USER_ID_SIZE> SaveFile::getUserId()
 
 std::array<std::byte, SAVE_DATA_SIZE> SaveFile::getSaveData()
 {
-    if (!m_valid || m_buffer.size() == 0)
+    if (!m_valid)
     {
+        LOG_F(ERROR, "Failed to retrieve save data: Invalid file");
+        return {};
+    }
+    
+
+    if (m_buffer.size() == 0)
+    {
+        LOG_F(ERROR, "Failed to retrieve save data: File buffer is empty");
         return {};
     }
 
@@ -92,8 +113,16 @@ std::array<std::byte, SAVE_DATA_SIZE> SaveFile::getSaveData()
 
 std::array<std::byte, SHA256_SIZE> SaveFile::generateFirstChecksum()
 {
-    if (!m_valid || m_buffer.size() == 0)
+    if (!m_valid)
     {
+        LOG_F(ERROR, "Failed to generate first checksum: Invalid file");
+        return {};
+    }
+    
+
+    if (m_buffer.size() == 0)
+    {
+        LOG_F(ERROR, "Failed to generate first checksum: File buffer is empty");
         return {};
     }
 
