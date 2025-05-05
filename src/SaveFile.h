@@ -10,6 +10,9 @@ const int SHA256_SIZE = 0x20;
 const int USER_ID_OFFSET = 0x20;
 const int SAVE_DATA_OFFSET = 0x80;
 
+const int SECOND_CHECKSUM_OFFSET = 0x40;
+const int THIRD_CHECKSUM_OFFSET = 0x48BD8;
+
 class SaveFile
 {
 public:
@@ -17,6 +20,7 @@ public:
     ~SaveFile();
 
     void fixChecksums();
+    void save(std::string path);
 
     std::array<std::byte, USER_ID_SIZE> getUserId();
     std::array<std::byte, SAVE_DATA_SIZE> getSaveData();
@@ -30,15 +34,16 @@ private:
     bool m_valid;
     
     void load();
-    void save();
 
     void cleanPath(std::string& path);
 
-    std::array<std::byte, SHA256_SIZE> generateFirstChecksum();
-    std::array<std::byte, SHA256_SIZE> generateSecondChecksum();
+    std::array<std::byte, SHA256_SIZE> generateFirstSha();
+    std::array<std::byte, SHA256_SIZE> generateSecondSha();
 
-    void fixFirstChecksum(std::array<std::byte, SHA256_SIZE> checksum);
-    void fixSecondChecksum(std::array<std::byte, SHA256_SIZE> checksum);
+    const int INDEX_MAPPING[4] = {1, 4, 11, 14};
+    void fixFirstChecksum(std::array<std::byte, SHA256_SIZE> sha);
+    void fixSecondChecksum(std::array<std::byte, SHA256_SIZE> sha);
+    void fixThirdChecksum(std::array<std::byte, SHA256_SIZE> sha);
 
     static std::array<std::byte, SHA256_SIZE> toByteArray(std::array<uint8_t, SHA256_SIZE> src);
 };

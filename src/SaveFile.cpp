@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <assert.h>
 #include <fstream>
 #include <filesystem>
 #include <SHA256.h>
@@ -111,7 +112,7 @@ std::array<std::byte, SAVE_DATA_SIZE> SaveFile::getSaveData()
     return saveData;
 }
 
-std::array<std::byte, SHA256_SIZE> SaveFile::generateFirstChecksum()
+std::array<std::byte, SHA256_SIZE> SaveFile::generateFirstSha()
 {
     if (!m_valid)
     {
@@ -139,7 +140,7 @@ std::array<std::byte, SHA256_SIZE> SaveFile::generateFirstChecksum()
     return toByteArray(finalSha.digest());
 }
 
-std::array<std::byte, SHA256_SIZE> SaveFile::generateSecondChecksum()
+std::array<std::byte, SHA256_SIZE> SaveFile::generateSecondSha()
 {
     if (!m_valid)
     {
@@ -184,9 +185,64 @@ std::array<std::byte, SHA256_SIZE> SaveFile::toByteArray(std::array<uint8_t, SHA
     return result;
 }
 
+void SaveFile::fixChecksums()
+{
+    std::array<std::byte, SHA256_SIZE> firstSha = generateFirstSha();
+    std::array<std::byte, SHA256_SIZE> secondSha = generateSecondSha();
+
+    fixFirstChecksum(firstSha);
+    fixSecondChecksum(secondSha);
+    fixThirdChecksum(secondSha);
+}
+
+void SaveFile::fixFirstChecksum(std::array<std::byte, SHA256_SIZE> sha)
+{
+    std::copy(sha.begin(), sha.end(), m_buffer.begin());
+}
+
+void SaveFile::fixSecondChecksum(std::array<std::byte, SHA256_SIZE> sha)
+{
+    int shaIndex = 0;
+    for (int row = 0; row < 4; row++)
+    {
+        for (int index : INDEX_MAPPING)
+        {
+            m_buffer.at(SECOND_CHECKSUM_OFFSET + index + (0x10 * row)) = sha.at(shaIndex);
+            shaIndex++;
+        }
+    }
+
+    assert(shaIndex == 0x10);
+}
+
+void SaveFile::fixThirdChecksum(std::array<std::byte, SHA256_SIZE> sha)
+{
+    int shaIndex = 0x10;
+    for (int row = 0; row < 4; row++)
+    {
+        for (int index : INDEX_MAPPING)
+        {
+            m_buffer.at(THIRD_CHECKSUM_OFFSET + index + (0x10 * row)) = sha.at(shaIndex);
+            shaIndex++;
+        }
+    }
+
+    assert(shaIndex == 0x20);
+}
+
+void SaveFile::save(std::string path)
+{
+    std::ofstream out;
+
+    out.open("out.DAT", std::ios::binary);
+    out.write(reinterpret_cast<char *>(m_buffer.data()), m_buffer.size());
+
+    out.close();
+}
+
 void SaveFile::test()
 {
-    std::array<std::byte, SHA256_SIZE> out = generateFirstChecksum();
+    std::array<std::byte, SHA256_SIZE> out = generateFirstSha();
     for (int i = 0; i < out.size(); i++)
     {
         std::cout << std::hex << (int)out[i] << " ";
