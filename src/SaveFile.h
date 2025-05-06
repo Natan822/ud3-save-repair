@@ -26,6 +26,7 @@ public:
     std::array<std::byte, SAVE_DATA_SIZE> getSaveData();
 
     void test();
+    bool isValid();
 private:
     static std::array<uint8_t, 0x10> HASH_SALT;
 

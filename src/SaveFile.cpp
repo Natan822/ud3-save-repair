@@ -32,6 +32,11 @@ SaveFile::SaveFile(std::string path)
 
 SaveFile::~SaveFile(){}
 
+bool SaveFile::isValid()
+{
+    return m_valid;
+}
+
 void SaveFile::load()
 {
     std::ifstream file(m_path, std::ios::binary);
@@ -234,10 +239,11 @@ void SaveFile::save(std::string path)
 {
     std::ofstream out;
 
-    out.open("out.DAT", std::ios::binary);
+    out.open(path, std::ios::binary);
     out.write(reinterpret_cast<char *>(m_buffer.data()), m_buffer.size());
 
     out.close();
+    LOG_F(INFO, "File saved at: %s", path.c_str());
 }
 
 void SaveFile::test()
