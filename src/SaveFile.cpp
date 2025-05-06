@@ -245,13 +245,3 @@ void SaveFile::save(std::string path)
     out.close();
     LOG_F(INFO, "File saved at: %s", path.c_str());
 }
-
-void SaveFile::test()
-{
-    std::array<std::byte, SHA256_SIZE> out = generateFirstSha();
-    for (int i = 0; i < out.size(); i++)
-    {
-        std::cout << std::hex << (int)out[i] << " ";
-    }
-    
-}
