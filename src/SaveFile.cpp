@@ -193,9 +193,9 @@ std::array<std::byte, SHA256_SIZE> SaveFile::toByteArray(std::array<uint8_t, SHA
 void SaveFile::fixChecksums()
 {
     std::array<std::byte, SHA256_SIZE> firstSha = generateFirstSha();
-    std::array<std::byte, SHA256_SIZE> secondSha = generateSecondSha();
-
     fixFirstChecksum(firstSha);
+
+    std::array<std::byte, SHA256_SIZE> secondSha = generateSecondSha();
     fixSecondChecksum(secondSha);
     fixThirdChecksum(secondSha);
 }

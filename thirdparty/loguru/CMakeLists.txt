@@ -9,13 +9,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(loguru)
 
 target_include_directories(
-    UD3-Checksum-Repair
+    UD3-Save-Repair
     PUBLIC
     ${loguru_SOURCE_DIR}
 )
 
 target_sources(
-    UD3-Checksum-Repair
+    UD3-Save-Repair
     PUBLIC
     ${loguru_SOURCE_DIR}/loguru.cpp 
 )
