@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Utils
 {
@@ -11,4 +12,9 @@ namespace Utils
     void ltrim(std::string &_string); // Left
     void rtrim(std::string &_string); // RIght
     void trim(std::string &_string);  // Left and Right
+
+    std::vector<std::string> splitString(std::string _string, std::string delimiter);
+
+
+    void cleanPath(std::string& path);
 }

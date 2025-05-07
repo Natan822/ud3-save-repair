@@ -3,6 +3,14 @@ This is a tool for repairing the checksums of UFC Undisputed 3 save files, allow
 
 ### Supported files
 - SYSTEM.DAT
+- CAFLIST.DAT
+- CAROLIST.DAT
+- HLRCLIST.DAT
+- HLRFLIST.DAT
+- HLRHLIST.DAT
+- HLRQLIST.DAT
+- PNTLIST.DAT
+- STR.DAT
 
 ## Usage 
 ```bash

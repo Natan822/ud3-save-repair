@@ -4,6 +4,7 @@
 #include <sha256.h>
 #include <loguru.hpp>
 #include "SaveFile.h"
+#include "SaveFileFactory.h"
 
 void usageMessage()
 {
@@ -30,16 +31,22 @@ int main(int argc, char** argv)
     
     std::string path = argv[1];
 
-    SaveFile file(path);
+    auto file = SaveFileFactory::createSaveFile(path);
+    if (file == nullptr)
+    {
+        std::cout << "Error: file not supported." << std::endl;
+        return -3;
+    }
+    
 
-    if (!file.isValid())
+    if (!file->isValid())
     {
         std::cout << "Error: failed to open input file" << std::endl;
         return -2;
     }
     
-    file.fixChecksums();
-    file.save("fixed-SYSTEM.DAT");
+    file->fixChecksums();
+    file->save("fixed-" + file->getName());
 
     std::cout << "Checksum repaired. File saved: `fixed-SYSTEM.DAT`" << std::endl;
     return 0;

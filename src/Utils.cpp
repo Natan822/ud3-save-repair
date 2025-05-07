@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <vector>
 
 namespace Utils
 {
@@ -31,5 +32,30 @@ namespace Utils
     {
         ltrim(_string);
         rtrim(_string);
+    }
+
+    std::vector<std::string> splitString(std::string _string, std::string delimiter)
+    {
+        std::vector<std::string> result;
+
+        int start = 0;
+        int index = _string.find(delimiter, start);
+        while (index != std::string::npos)
+        {
+            result.push_back(_string.substr(start, index - start));
+
+            start = index + delimiter.size();
+            index = _string.find(delimiter, start);
+        }
+        result.push_back(_string.substr(start, _string.size() - start));
+
+        return result;
+    }
+
+    void cleanPath(std::string &path)
+    {
+        Utils::trim(path);
+        Utils::replaceAll(path, "\\", "/");
+        Utils::replaceAll(path, "\"", "");
     }
 }
